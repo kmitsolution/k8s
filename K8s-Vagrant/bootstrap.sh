@@ -30,19 +30,26 @@ EOF
 sysctl --system >/dev/null 2>&1
 
 echo "[TASK 5] Install containerd runtime"
-apt update -qq >/dev/null 2>&1
-apt install -qq -y containerd apt-transport-https >/dev/null 2>&1
-mkdir /etc/containerd
-containerd config default > /etc/containerd/config.toml
-systemctl restart containerd
-systemctl enable containerd >/dev/null 2>&1
+# apt update -qq >/dev/null 2>&1
+# apt install -qq -y containerd apt-transport-https >/dev/null 2>&1
+#mkdir /etc/containerd
+#containerd config default > /etc/containerd/config.toml
+#systemctl restart containerd
+#systemctl enable containerd >/dev/null 2>&1
+apt update
+apt install docker.io -y
+systemctl enable docker >/dev/null 2>&1
+apt-get install -y apt-transport-https curl
+
 
 echo "[TASK 6] Add apt repo for kubernetes"
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - >/dev/null 2>&1
-apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" >/dev/null 2>&1
+sudo mkdir /etc/apt/keyrings
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list >/dev/null 2>&1
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg >/dev/null 2>&1
 
 echo "[TASK 7] Install Kubernetes components (kubeadm, kubelet and kubectl)"
-apt install -qq -y kubeadm=1.21.0-00 kubelet=1.21.0-00 kubectl=1.21.0-00 >/dev/null 2>&1
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl >/dev/null 2>&1
 
 echo "[TASK 8] Enable ssh password authentication"
 sed -i 's/^PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
