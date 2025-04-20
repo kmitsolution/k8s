@@ -14,4 +14,4 @@ echo "[TASK 3] Deploy flannel network"
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml >/dev/null 2>&1
 
 echo "[TASK 4] Generate and save cluster join command to /joincluster.sh"
-kubeadm token create --print-join-command > tmp/joincluster.sh 2>/dev/null
+kubeadm token create --print-join-command > /tmp/joincluster.sh 2>/dev/null
